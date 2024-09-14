@@ -1,30 +1,26 @@
-# Use the official .NET SDK image for the build stage
-FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
-
-# Set the working directory in the container
+# Use the official .NET SDK image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
 WORKDIR /app
+EXPOSE 80
+EXPOSE 443
 
-# Copy the .csproj file and restore dependencies
-COPY *.csproj ./
-RUN dotnet restore
+# Install phase
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY . .
 
-# Copy the rest of the application code
-COPY . ./
+# Specify the project file explicitly for dotnet restore
+RUN dotnet restore "./Api.csproj"
 
-# Build the application
-RUN dotnet build -c Release -o /app/build
+# Build phase
+RUN dotnet build "./Api.csproj" -c Release -o /app/build
 
-# Publish the application
-RUN dotnet publish -c Release -o /app/publish
+# Publish phase
+FROM build AS publish
+RUN dotnet publish "./Api.csproj" -c Release -o /app/publish
 
-# Use the official .NET runtime image for the final stage
-FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS final
-
-# Set the working directory in the final container
+# Final stage
+FROM base AS final
 WORKDIR /app
-
-# Copy the published files from the build stage
-COPY --from=build /app/publish .
-
-# Specify the entry point for the application
+COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "Api.dll"]
