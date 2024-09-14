@@ -2,7 +2,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set the working directory in the container
-WORKDIR /src
+WORKDIR /Api
 
 # Copy the project file and restore dependencies
 COPY Api.csproj ./
