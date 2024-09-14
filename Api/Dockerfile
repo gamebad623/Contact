@@ -1,13 +1,12 @@
-# Use the official .NET SDK image for the build phase
+# Use the official .NET SDK image
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set the working directory in the container
 WORKDIR /app
 
 # Copy the project file and restore dependencies
-# install phase
-COPY . /app/.
-RUN  dotnet restore
+COPY Api.csproj ./
+RUN dotnet restore
 
 # Copy the rest of the application code
 COPY . ./
