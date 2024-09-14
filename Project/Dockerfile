@@ -12,17 +12,17 @@ RUN dotnet restore
 COPY . ./
 
 # Build and publish the application
-RUN dotnet build -c Release -o /app/build
-RUN dotnet publish -c Release -o /app/publish
+RUN dotnet build -c Release -o /Api/build
+RUN dotnet publish -c Release -o /Api/publish
 
 # Use the official .NET runtime image for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
 
 # Set the working directory in the final container
-WORKDIR /app
+WORKDIR /Api
 
 # Copy the published application from the build stage
-COPY --from=build /app/publish .
+COPY --from=build /Api/publish .
 
 # Expose ports (optional, depending on your application needs)
 EXPOSE 80
