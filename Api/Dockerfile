@@ -2,18 +2,18 @@
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 
 # Set the working directory in the container
-WORKDIR /src
+WORKDIR /app
 
 # Copy the project file and restore dependencies
 COPY Api.csproj ./
-RUN dotnet restore || { echo 'dotnet restore failed'; exit 1; }
+RUN dotnet restore
 
 # Copy the rest of the application code
 COPY . ./
 
 # Build and publish the application
-RUN dotnet build -c Release -o /app/build || { echo 'dotnet build failed'; exit 1; }
-RUN dotnet publish -c Release -o /app/publish || { echo 'dotnet publish failed'; exit 1; }
+RUN dotnet build -c Release -o /app/build
+RUN dotnet publish -c Release -o /app/publish
 
 # Use the official .NET runtime image for the final stage
 FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
